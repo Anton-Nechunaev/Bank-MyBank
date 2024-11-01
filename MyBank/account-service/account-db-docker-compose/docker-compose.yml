@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  account_db:
+    image: postgres:16.3-alpine
+    container_name: account_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: account
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5437:5432"
+    volumes:
+      - "account_db:/var/lib/postgresql/data"
+    networks:
+      - active_bank
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "account", "-U", "admin" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  account_db:
+    name: account_db
+
+networks:
+  active_bank:
+    name: active_bank
+    external: false
